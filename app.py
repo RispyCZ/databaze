@@ -1,41 +1,39 @@
 from conn import konektor
+from prettytable import from_db_cursor
 
 
-def Get_Users():
+
+def get_users():
     cursor = konektor.cursor()
     sql = "SELECT * FROM test"
     cursor.execute(sql)
-    result = cursor.fetchall()
+    table = from_db_cursor(cursor)
+    table.field_names = ["ID", "Jméno", "Příjmení", "Třída"]
+    print(table)
 
-    print("ID\t Jméno\t Příjmení\t Třída\t")
-    for item in result:
-        print(f"{item[0]}\t {item[1]}\t {item[2]}\t {item[3]}\t")
 
-def Get_Users_By_ID(id: int):
+def get_users_by_id(id: int):
     cursor = konektor.cursor()
-    sql = "SELECT * FROM test WHERE id=?"
-    data = (id, )
-    cursor.execute(sql, data)
-    result = cursor.fetchall()
-
-    print("ID\t Jméno\t Příjmení\t Třída\t")
-    for item in result:
-        print(f"{item[0]}\t {item[1]}\t {item[2]}\t {item[3]}\t")
+    sql = "SELECT * FROM test WHERE id=%s"
+    user = (id, )
+    cursor.execute(sql, user)
+    table = from_db_cursor(cursor)
+    table.field_names = ["ID", "Jméno", "Příjmení", "Třída"]
+    print(table)
 
 
-
-def PrintHelp():
+def printhelp():
     print("\n")
     print("1) Vypiš uživatele podle ID")
     print("2) Vypiš uživatle podle třídy")
 
 
 if __name__ == "__main__":
-    Get_Users()
-    PrintHelp()
+    get_users()
+    printhelp()
     action = int(input("Vyber možnost ze seznamu: "))
 
     if action == 1:
-        Get_Users_By_ID(1)
+        get_users_by_id(1)
 
 
